@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import 'services_page.dart';
+import 'profile_page.dart';
+import 'marketplace_page.dart';
+import 'orders_page.dart';
+import 'videos_page.dart';
 
 class HomePage extends StatefulWidget {
+  final String userName;
+  final String userEmail;
+  
+  const HomePage({
+    Key? key, 
+    required this.userName,
+    required this.userEmail,
+  }) : super(key: key);
+  
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -13,6 +27,43 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+    
+    // Navigate based on index
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ServicesPage()),
+        );
+        break;
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VideosPage()),
+        );
+        break;
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MarketplacePage()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OrdersPage()),
+        );
+        break;
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage(
+            userName: widget.userName,
+            userEmail: widget.userEmail,
+          )),
+        );
+        break;
+    }
   }
 
   @override
@@ -47,21 +98,57 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.yellow,
               ),
             ),
+            SizedBox(height: 16),
+            Text(
+              'Welcome, ${widget.userName}',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.white,
+              ),
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildMenuButton('Services'),
+                    _buildMenuButton('Services', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ServicesPage()),
+                      );
+                    }),
                     SizedBox(height: 20),
-                    _buildMenuButton('Videos'),
+                    _buildMenuButton('Videos', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => VideosPage()),
+                      );
+                    }),
                     SizedBox(height: 20),
-                    _buildMenuButton('Marketplace'),
+                    _buildMenuButton('Marketplace', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MarketplacePage()),
+                      );
+                    }),
                     SizedBox(height: 20),
-                    _buildMenuButton('Orders'),
+                    _buildMenuButton('Orders', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => OrdersPage()),
+                      );
+                    }),
                     SizedBox(height: 20),
-                    _buildMenuButton('Profile'),
+                    _buildMenuButton('Profile', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfilePage(
+                          userName: widget.userName,
+                          userEmail: widget.userEmail,
+                        )),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -91,13 +178,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMenuButton(String text) {
+  Widget _buildMenuButton(String text, VoidCallback onPressed) {
     return Container(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement navigation for each button
-        },
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.black,
           backgroundColor: Colors.yellow,

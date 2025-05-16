@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "686200938533",
-    "project_id": "appdevfinal-a9550",
-    "storage_bucket": "appdevfinal-a9550.firebasestorage.app"
+    "project_number": "528531621935",
+    "project_id": "appdevproject-9f5d9",
+    "storage_bucket": "appdevproject-9f5d9.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:686200938533:android:3a953f922ddd520fc29fcc",
+        "mobilesdk_app_id": "1:528531621935:android:cf0a68c85389cf9a3c5eda",
         "android_client_info": {
-          "package_name": "com.example.final"
+          "package_name": "com.example.fluuter_project_test"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBENcozMh5oR473qCM17KPCXOsF-3zqDLU"
+          "current_key": "AIzaSyB0RTL6LarpRaKsSd-vyeM28ggjqAbO0AA"
         }
       ],
       "services": {

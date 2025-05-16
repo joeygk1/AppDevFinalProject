@@ -46,9 +46,16 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
+      final userData = query.docs.first.data();
+      final userName = userData['name'] ?? 'User';
+      final userEmail = userData['email'] ?? '';
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => HomePage(
+          userName: userName,
+          userEmail: userEmail,
+        )),
       );
     } catch (e) {
       setState(() {
@@ -166,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Don’t have an account? ', style: TextStyle(color: Colors.white)),
+                    Text("Don't have an account? ", style: TextStyle(color: Colors.white)),
                     TextButton(
                       onPressed: () {
                         Navigator.pushReplacement(

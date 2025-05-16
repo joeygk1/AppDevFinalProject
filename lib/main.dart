@@ -4,7 +4,14 @@ import 'splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+          apiKey: "AIzaSyB0RTL6LarpRaKsSd-vyeM28ggjqAbO0AA",
+          appId: "528531621935",
+          messagingSenderId: "528531621935",
+          projectId: "appdevproject-9f5d9"
+      )
+  );
   runApp(MyApp());
 }
 

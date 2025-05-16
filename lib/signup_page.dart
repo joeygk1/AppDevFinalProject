@@ -58,7 +58,10 @@ class _SignupPageState extends State<SignupPage> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => HomePage(
+          userName: _nameController.text.trim(),
+          userEmail: _emailController.text.trim(),
+        )),
       );
     } catch (e) {
       setState(() {

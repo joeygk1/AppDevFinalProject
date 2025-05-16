@@ -11,13 +11,14 @@ allprojects {
 }
 
 subprojects {
-    def newSubprojectBuildDir = newBuildDir.dir(project.name)
-    project.layout.buildDirectory.set(newSubprojectBuildDir)
+    //def newSubprojectBuildDir = newBuildDir.dir(project.name)
+    //project.layout.buildDirectory.set(newSubprojectBuildDir)
+    project.layout.buildDirectory.set(file("$rootDir/build/${project.name}"))
 }
-
+/*
 tasks.register("clean", Delete) {
     delete rootProject.layout.buildDirectory
-}
+}*/
 
 apply plugin: 'com.google.gms.google-services'
 
