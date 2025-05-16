@@ -65,14 +65,6 @@ class Sneaker {
     );
   }
 
-  String get retailPrice {
-    final retailPriceTrait = traits.firstWhere(
-      (trait) => trait['trait'] == 'Retail Price',
-      orElse: () => {'value': '0'},
-    );
-    return retailPriceTrait['value'] ?? '0';
-  }
-
   String get releaseDate {
     final releaseDateTrait = traits.firstWhere(
       (trait) => trait['trait'] == 'Release Date',

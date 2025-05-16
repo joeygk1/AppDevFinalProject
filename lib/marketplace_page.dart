@@ -36,6 +36,10 @@ class _MarketplacePageState extends State<MarketplacePage> {
       if (brand.isNotEmpty) {
         queryParams = '?brand=$brand';
       }
+      if (_searchController.text.isNotEmpty) {
+        queryParams += queryParams.isEmpty ? '?' : '&';
+        queryParams += 'query=${Uri.encodeComponent(_searchController.text)}';
+      }
 
       final response = await http.get(
         Uri.parse('https://api.kicks.dev/v3/stockx/products$queryParams'),
@@ -75,7 +79,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
 
   void _handleSearch(String query) {
     setState(() {
-      brand = query;
       isLoading = true;
     });
     fetchSneakers();
@@ -110,6 +113,31 @@ class _MarketplacePageState extends State<MarketplacePage> {
       body: SafeArea(
         child: Column(
           children: [
+            // Search Bar
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: TextField(
+                controller: _searchController,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Search sneakers...',
+                  hintStyle: TextStyle(color: Colors.grey[400]),
+                  prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
+                  filled: true,
+                  fillColor: Colors.grey[900],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0),
+                ),
+                onSubmitted: (query) {
+                  if (query.isNotEmpty) {
+                    _handleSearch(query);
+                  }
+                },
+              ),
+            ),
             // Brand Filter Chips
             Container(
               height: 50,
