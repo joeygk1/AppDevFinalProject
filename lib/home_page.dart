@@ -5,6 +5,7 @@ import 'profile_page.dart';
 import 'marketplace_page.dart';
 import 'orders_page.dart';
 import 'videos_page.dart';
+import 'widgets.dart';
 
 class HomePage extends StatefulWidget {
   final String userName;
@@ -22,48 +23,54 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  late String _currentName;
+  late String _currentEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentName = widget.userName;
+    _currentEmail = widget.userEmail;
+  }
+
+  Widget _buildPage(int index) {
+    switch (index) {
+      case 0:
+        return ServicesPage();
+      case 1:
+        return VideosPage();
+      case 2:
+        return MarketplacePage(userEmail: _currentEmail);
+      case 3:
+        return OrdersPage(userEmail: _currentEmail);
+      case 4:
+        return ProfilePage(
+          userName: _currentName,
+          userEmail: _currentEmail,
+          onProfileUpdate: (name, email) {
+            setState(() {
+              _currentName = name;
+              _currentEmail = email;
+            });
+          },
+        );
+      default:
+        return ServicesPage();
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    
-    // Navigate based on index
-    switch (index) {
-      case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ServicesPage()),
-        );
-        break;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => VideosPage()),
-        );
-        break;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MarketplacePage()),
-        );
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => OrdersPage()),
-        );
-        break;
-      case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage(
-            userName: widget.userName,
-            userEmail: widget.userEmail,
-          )),
-        );
-        break;
-    }
+    _navigateToPage(_buildPage(index));
+  }
+
+  void _navigateToPage(Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
   }
 
   @override
@@ -75,15 +82,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: Text('Home', style: TextStyle(color: Colors.white)),
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-          ),
+          buildLogoutButton(context),
         ],
       ),
       body: SafeArea(
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> {
             ),
             SizedBox(height: 16),
             Text(
-              'Welcome, ${widget.userName}',
+              'Welcome, $_currentName',
               style: TextStyle(
                 fontSize: 24,
                 color: Colors.white,
@@ -112,43 +111,15 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildMenuButton('Services', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ServicesPage()),
-                      );
-                    }),
+                    _buildMenuButton('Services', () => _navigateToPage(_buildPage(0))),
                     SizedBox(height: 20),
-                    _buildMenuButton('Videos', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => VideosPage()),
-                      );
-                    }),
+                    _buildMenuButton('Videos', () => _navigateToPage(_buildPage(1))),
                     SizedBox(height: 20),
-                    _buildMenuButton('Marketplace', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MarketplacePage()),
-                      );
-                    }),
+                    _buildMenuButton('Marketplace', () => _navigateToPage(_buildPage(2))),
                     SizedBox(height: 20),
-                    _buildMenuButton('Orders', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => OrdersPage()),
-                      );
-                    }),
+                    _buildMenuButton('Orders', () => _navigateToPage(_buildPage(3))),
                     SizedBox(height: 20),
-                    _buildMenuButton('Profile', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfilePage(
-                          userName: widget.userName,
-                          userEmail: widget.userEmail,
-                        )),
-                      );
-                    }),
+                    _buildMenuButton('Profile', () => _navigateToPage(_buildPage(4))),
                   ],
                 ),
               ),

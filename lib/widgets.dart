@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'login_page.dart';
 
 Widget buildTextFormField({
   required String label,
   required String hint,
   required TextEditingController controller,
-  String? Function(String?)? validator,
   bool obscure = false,
+  String? Function(String?)? validator,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         label,
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
       ),
       SizedBox(height: 8),
       TextFormField(
@@ -21,17 +26,82 @@ Widget buildTextFormField({
         validator: validator,
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.grey[800],
           hintText: hint,
           hintStyle: TextStyle(color: Colors.grey[400]),
-          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+          filled: true,
+          fillColor: Colors.grey[900],
           border: OutlineInputBorder(
-            borderSide: BorderSide.none,
             borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
           ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
       ),
     ],
+  );
+}
+
+Widget buildLogoutButton(BuildContext context) {
+  return IconButton(
+    icon: Icon(Icons.logout, color: Colors.white),
+    onPressed: () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    },
+  );
+}
+
+Widget buildErrorWidget(String message, {VoidCallback? onRetry}) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          message,
+          style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+        if (onRetry != null) ...[
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.yellow,
+              foregroundColor: Colors.black,
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
+}
+
+Widget buildLoadingWidget() {
+  return Center(
+    child: CircularProgressIndicator(
+      color: Colors.yellow,
+    ),
+  );
+}
+
+Widget buildEmptyStateWidget(String message) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          message,
+          style: TextStyle(color: Colors.white),
+        ),
+        SizedBox(height: 8),
+        Text(
+          'Your items will appear here',
+          style: TextStyle(color: Colors.grey[400]),
+        ),
+      ],
+    ),
   );
 }

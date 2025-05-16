@@ -1,16 +1,56 @@
 import 'package:flutter/material.dart';
 import 'widgets.dart';
 import 'login_page.dart';
+import 'edit_profile_page.dart';
+import 'home_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   final String userName;
   final String userEmail;
+  final Function(String, String) onProfileUpdate;
 
   const ProfilePage({
     Key? key,
     required this.userName,
     required this.userEmail,
+    required this.onProfileUpdate,
   }) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  late String _currentName;
+  late String _currentEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentName = widget.userName;
+    _currentEmail = widget.userEmail;
+  }
+
+  void _navigateToEditProfile() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditProfilePage(
+          userName: _currentName,
+          userEmail: _currentEmail,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _currentName = result['name'];
+        _currentEmail = result['email'];
+      });
+      // Notify home page of the update
+      widget.onProfileUpdate(_currentName, _currentEmail);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +64,7 @@ class ProfilePage extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-          ),
+          buildLogoutButton(context),
         ],
       ),
       body: SafeArea(
@@ -46,7 +78,7 @@ class ProfilePage extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                userName,
+                _currentName,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -55,14 +87,12 @@ class ProfilePage extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                userEmail,
+                _currentEmail,
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               SizedBox(height: 40),
               ElevatedButton(
-                onPressed: () {
-                  // Navigate to edit profile page or update functionality
-                },
+                onPressed: _navigateToEditProfile,
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
                   backgroundColor: Colors.yellow,

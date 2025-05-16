@@ -3,8 +3,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'models/sneaker.dart';
 import 'sneaker_details_page.dart';
+import 'widgets.dart';
 
 class MarketplacePage extends StatefulWidget {
+  final String userEmail;
+
+  const MarketplacePage({Key? key, required this.userEmail}) : super(key: key);
+
   @override
   _MarketplacePageState createState() => _MarketplacePageState();
 }
@@ -185,51 +190,27 @@ class _MarketplacePageState extends State<MarketplacePage> {
 
   Widget _buildBody() {
     if (isLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Colors.yellow,
-        ),
-      );
+      return buildLoadingWidget();
     }
 
     if (error.isNotEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              error,
-              style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  isLoading = true;
-                  error = '';
-                });
-                fetchSneakers();
-              },
-              child: Text('Retry'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.yellow,
-                foregroundColor: Colors.black,
-              ),
-            ),
-          ],
-        ),
+      return buildErrorWidget(
+        error,
+        onRetry: () {
+          setState(() {
+            isLoading = true;
+            error = '';
+          });
+          fetchSneakers();
+        },
       );
     }
 
     if (sneakers.isEmpty) {
-      return Center(
-        child: Text(
-          brand.isNotEmpty 
-              ? 'No sneakers found for $brand'
-              : 'No sneakers found',
-          style: TextStyle(color: Colors.white),
-        ),
+      return buildEmptyStateWidget(
+        brand.isNotEmpty 
+            ? 'No sneakers found for $brand'
+            : 'No sneakers found'
       );
     }
 
@@ -257,7 +238,10 @@ class _MarketplacePageState extends State<MarketplacePage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SneakerDetailsPage(sneaker: sneaker),
+              builder: (context) => SneakerDetailsPage(
+                sneaker: sneaker,
+                userEmail: widget.userEmail,
+              ),
             ),
           );
         },

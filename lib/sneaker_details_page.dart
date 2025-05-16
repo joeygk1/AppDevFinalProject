@@ -1,10 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models/sneaker.dart';
+import 'widgets.dart';
 
 class SneakerDetailsPage extends StatelessWidget {
   final Sneaker sneaker;
+  final String userEmail;
 
-  const SneakerDetailsPage({Key? key, required this.sneaker}) : super(key: key);
+  const SneakerDetailsPage({
+    Key? key, 
+    required this.sneaker,
+    required this.userEmail,
+  }) : super(key: key);
+
+  Future<void> _handleBuy(BuildContext context) async {
+    try {
+      // Create a new order document
+      final orderRef = FirebaseFirestore.instance.collection('orders').doc();
+      
+      // Create the order data with all relevant sneaker details
+      final orderData = {
+        'id': orderRef.id,
+        'userId': userEmail,
+        'sneaker': {
+          'id': sneaker.id,
+          'title': sneaker.title,
+          'brand': sneaker.brand,
+          'image': sneaker.image,
+          'sku': sneaker.sku,
+          'description': sneaker.description,
+          'releaseDate': sneaker.releaseDate,
+          'colorway': sneaker.colorway,
+          'category': sneaker.category,
+          'minPrice': sneaker.minPrice,
+          'maxPrice': sneaker.maxPrice,
+          'avgPrice': sneaker.avgPrice,
+          'weeklyOrders': sneaker.weeklyOrders,
+        },
+        'price': sneaker.avgPrice,
+        'orderDate': DateTime.now().toIso8601String(),
+        'status': 'pending',
+      };
+
+      // Save the order to Firestore
+      await orderRef.set(orderData);
+
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Order placed successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Navigate back to marketplace
+      Navigator.pop(context);
+    } catch (e) {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error placing order: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +206,7 @@ class SneakerDetailsPage extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // TODO: Implement buy functionality
-                      },
+                      onPressed: () => _handleBuy(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.yellow,
                         foregroundColor: Colors.black,
@@ -177,31 +235,6 @@ class SneakerDetailsPage extends StatelessWidget {
   }
 
   Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 16,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMarketStat(String label, String value) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -230,5 +263,9 @@ class SneakerDetailsPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildMarketStat(String label, String value) {
+    return _buildDetailRow(label, value);
   }
 } 
