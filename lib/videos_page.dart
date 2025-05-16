@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
-import 'widgets.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class VideosPage extends StatefulWidget {
   @override
@@ -8,122 +7,153 @@ class VideosPage extends StatefulWidget {
 }
 
 class _VideosPageState extends State<VideosPage> {
+  // use firestore to get these
   final List<Map<String, String>> videos = [
     {
-      'title': 'How to Clean Your Sneakers',
-      'description': 'Learn the proper way to clean and maintain your sneakers',
-      'videoUrl': 'https://example.com/videos/clean-sneakers.mp4',
-      'thumbnail': 'https://example.com/thumbnails/clean-sneakers.jpg',
+      'title': 'Top 5 Sneaker Cleaning Tips Everyone Should Know!',
+      'description': 'Learn the best way to clean your sneakers',
+      'youtubeId': 'U9s5cYTCOvA',
     },
     {
-      'title': 'Sneaker Storage Tips',
-      'description': 'Best practices for storing your sneaker collection',
-      'videoUrl': 'https://example.com/videos/storage-tips.mp4',
-      'thumbnail': 'https://example.com/thumbnails/storage-tips.jpg',
+      'title': 'Modern Sneakers Explained in 15 minutess',
+      'description': 'explanation of modern sneakers!',
+      'youtubeId': 'FFDYIGhiIk8',
     },
     {
-      'title': 'Sneaker Authentication Guide',
-      'description': 'How to spot fake sneakers and verify authenticity',
-      'videoUrl': 'https://example.com/videos/authentication.mp4',
-      'thumbnail': 'https://example.com/thumbnails/authentication.jpg',
+      'title': 'The Full History Of Air Jordan Sneakers',
+      'description': 'learn the history of the most iconic shoes ever!',
+      'youtubeId': 'CsNTX6vVcLc',
     },
   ];
 
-  VideoPlayerController? _controller;
-  bool _isPlaying = false;
-
   @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
-
-  void _initializeVideo(String videoUrl) {
-    _controller?.dispose();
-    _controller = VideoPlayerController.network(videoUrl)
-      ..initialize().then((_) {
-        setState(() {});
-      });
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: Text(
+          'Sneaker Care Videos',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      body: SafeArea(
+        child: ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: videos.length,
+          itemBuilder: (context, index) {
+            final video = videos[index];
+            return _buildVideoCard(video);
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildVideoCard(Map<String, String> video) {
     return Card(
       color: Colors.grey[900],
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Video Player
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: _controller?.value.isInitialized ?? false
-                ? Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      VideoPlayer(_controller!),
-                      IconButton(
-                        icon: Icon(
-                          _isPlaying ? Icons.pause : Icons.play_arrow,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPlaying = !_isPlaying;
-                            _isPlaying ? _controller?.play() : _controller?.pause();
-                          });
-                        },
-                      ),
-                    ],
-                  )
-                : Image.network(
-                    video['thumbnail']!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[800],
-                        child: Icon(Icons.image_not_supported, color: Colors.white),
-                      );
-                    },
-                  ),
-          ),
-          // Video Info
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      margin: EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: () {
+          _playVideo(video['youtubeId']!);
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Thumbnail
+            Stack(
+              alignment: Alignment.center,
               children: [
-                Text(
-                  video['title']!,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Image.network(
+                  'https://img.youtube.com/vi/${video['youtubeId']}/maxresdefault.jpg',
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      color: Colors.grey[800],
+                      child: Icon(Icons.error, color: Colors.white),
+                    );
+                  },
                 ),
-                SizedBox(height: 8),
-                Text(
-                  video['description']!,
-                  style: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14,
-                  ),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _initializeVideo(video['videoUrl']!),
-                  child: Text('Play Video'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.yellow,
-                    foregroundColor: Colors.black,
-                  ),
+                Icon(
+                  Icons.play_circle_filled,
+                  color: Colors.white,
+                  size: 50,
                 ),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    video['title']!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    video['description']!,
+                    style: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _playVideo(String videoId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPlayerPage(videoId: videoId),
+      ),
+    );
+  }
+}
+
+class VideoPlayerPage extends StatefulWidget {
+  final String videoId;
+
+  const VideoPlayerPage({Key? key, required this.videoId}) : super(key: key);
+
+  @override
+  _VideoPlayerPageState createState() => _VideoPlayerPageState();
+}
+
+class _VideoPlayerPageState extends State<VideoPlayerPage> {
+  late YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videoId,
+      flags: YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -131,14 +161,23 @@ class _VideosPageState extends State<VideosPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text('Sneaker Care Videos'),
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: Text(
+          'Video Player',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: ListView.builder(
-        itemCount: videos.length,
-        itemBuilder: (context, index) {
-          return _buildVideoCard(videos[index]);
-        },
+      body: Center(
+        child: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.yellow,
+          progressColors: ProgressBarColors(
+            playedColor: Colors.yellow,
+            handleColor: Colors.yellow,
+          ),
+        ),
       ),
     );
   }

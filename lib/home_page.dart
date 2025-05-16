@@ -33,18 +33,34 @@ class _HomePageState extends State<HomePage> {
     _currentEmail = widget.userEmail;
   }
 
-  Widget _buildPage(int index) {
+  void _navigateToPage(Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    
+    // Navigate based on index
     switch (index) {
       case 0:
-        return ServicesPage();
+        _navigateToPage(ServicesPage());
+        break;
       case 1:
-        return VideosPage();
+        _navigateToPage(VideosPage());
+        break;
       case 2:
-        return MarketplacePage(userEmail: _currentEmail);
+        _navigateToPage(MarketplacePage(userEmail: _currentEmail));
+        break;
       case 3:
-        return OrdersPage(userEmail: _currentEmail);
+        _navigateToPage(OrdersPage(userEmail: _currentEmail));
+        break;
       case 4:
-        return ProfilePage(
+        _navigateToPage(ProfilePage(
           userName: _currentName,
           userEmail: _currentEmail,
           onProfileUpdate: (name, email) {
@@ -53,24 +69,9 @@ class _HomePageState extends State<HomePage> {
               _currentEmail = email;
             });
           },
-        );
-      default:
-        return ServicesPage();
+        ));
+        break;
     }
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    _navigateToPage(_buildPage(index));
-  }
-
-  void _navigateToPage(Widget page) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => page),
-    );
   }
 
   @override
@@ -111,15 +112,24 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildMenuButton('Services', () => _navigateToPage(_buildPage(0))),
+                    _buildMenuButton('Services', () => _navigateToPage(ServicesPage())),
                     SizedBox(height: 20),
-                    _buildMenuButton('Videos', () => _navigateToPage(_buildPage(1))),
+                    _buildMenuButton('Videos', () => _navigateToPage(VideosPage())),
                     SizedBox(height: 20),
-                    _buildMenuButton('Marketplace', () => _navigateToPage(_buildPage(2))),
+                    _buildMenuButton('Marketplace', () => _navigateToPage(MarketplacePage(userEmail: _currentEmail))),
                     SizedBox(height: 20),
-                    _buildMenuButton('Orders', () => _navigateToPage(_buildPage(3))),
+                    _buildMenuButton('Orders', () => _navigateToPage(OrdersPage(userEmail: _currentEmail))),
                     SizedBox(height: 20),
-                    _buildMenuButton('Profile', () => _navigateToPage(_buildPage(4))),
+                    _buildMenuButton('Profile', () => _navigateToPage(ProfilePage(
+                      userName: _currentName,
+                      userEmail: _currentEmail,
+                      onProfileUpdate: (name, email) {
+                        setState(() {
+                          _currentName = name;
+                          _currentEmail = email;
+                        });
+                      },
+                    ))),
                   ],
                 ),
               ),

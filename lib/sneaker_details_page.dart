@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models/sneaker.dart';
-import 'widgets.dart';
 
 class SneakerDetailsPage extends StatelessWidget {
   final Sneaker sneaker;
@@ -18,7 +17,7 @@ class SneakerDetailsPage extends StatelessWidget {
       // Create a new order document
       final orderRef = FirebaseFirestore.instance.collection('orders').doc();
       
-      // Create the order data with all relevant sneaker details
+      // Create the order data
       final orderData = {
         'id': orderRef.id,
         'userId': userEmail,
@@ -235,6 +234,31 @@ class SneakerDetailsPage extends StatelessWidget {
   }
 
   Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMarketStat(String label, String value) {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       padding: EdgeInsets.all(16),
@@ -263,9 +287,5 @@ class SneakerDetailsPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildMarketStat(String label, String value) {
-    return _buildDetailRow(label, value);
   }
 } 

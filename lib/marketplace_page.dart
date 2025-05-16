@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'models/sneaker.dart';
 import 'sneaker_details_page.dart';
-import 'widgets.dart';
 
 class MarketplacePage extends StatefulWidget {
   final String userEmail;
@@ -190,27 +189,51 @@ class _MarketplacePageState extends State<MarketplacePage> {
 
   Widget _buildBody() {
     if (isLoading) {
-      return buildLoadingWidget();
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.yellow,
+        ),
+      );
     }
 
     if (error.isNotEmpty) {
-      return buildErrorWidget(
-        error,
-        onRetry: () {
-          setState(() {
-            isLoading = true;
-            error = '';
-          });
-          fetchSneakers();
-        },
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              error,
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  isLoading = true;
+                  error = '';
+                });
+                fetchSneakers();
+              },
+              child: Text('Retry'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.yellow,
+                foregroundColor: Colors.black,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
     if (sneakers.isEmpty) {
-      return buildEmptyStateWidget(
-        brand.isNotEmpty 
-            ? 'No sneakers found for $brand'
-            : 'No sneakers found'
+      return Center(
+        child: Text(
+          brand.isNotEmpty 
+              ? 'No sneakers found for $brand'
+              : 'No sneakers found',
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'models/order.dart';
-import 'widgets.dart';
 
 class OrdersPage extends StatefulWidget {
   final String userEmail;
@@ -30,20 +29,60 @@ class _OrdersPageState extends State<OrdersPage> {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return buildErrorWidget(
-                'Error loading orders',
-                onRetry: () => setState(() {}),
+              print('Error loading orders: ${snapshot.error}');
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Error loading orders',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {}); // Refresh the page
+                      },
+                      child: Text('Retry'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.yellow,
+                        foregroundColor: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return buildLoadingWidget();
+              return Center(
+                child: CircularProgressIndicator(
+                  color: Colors.yellow,
+                ),
+              );
             }
 
             final orders = snapshot.data?.docs ?? [];
+            print('Number of orders found: ${orders.length}');
+            print('User email: ${widget.userEmail}');
 
             if (orders.isEmpty) {
-              return buildEmptyStateWidget('No orders yet');
+              return Center(
+        child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+                    Text(
+                      'No orders yet',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Your orders will appear here',
+                      style: TextStyle(color: Colors.grey[400]),
+                    ),
+                  ],
+                ),
+              );
             }
 
             return ListView.builder(
@@ -51,6 +90,7 @@ class _OrdersPageState extends State<OrdersPage> {
               itemCount: orders.length,
               itemBuilder: (context, index) {
                 final orderData = orders[index].data() as Map<String, dynamic>;
+                print('Order data: $orderData');
                 
                 try {
                   final order = Order.fromJson(orderData);
@@ -62,11 +102,12 @@ class _OrdersPageState extends State<OrdersPage> {
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                          order.image,
+                          order.sneaker.image,
                           width: 60,
                           height: 60,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
+                            print('Error loading image: $error');
                             return Container(
                               width: 60,
                               height: 60,
@@ -76,21 +117,16 @@ class _OrdersPageState extends State<OrdersPage> {
                           },
                         ),
                       ),
-                      title: Text(
-                        order.title,
+                  title: Text(
+                        order.sneaker.title,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
+                  ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 4),
-                          Text(
-                            order.brand,
-                            style: TextStyle(color: Colors.grey[400]),
-                          ),
                           SizedBox(height: 4),
                           Text(
                             'Ordered on ${order.orderDate.toString().split(' ')[0]}',
@@ -98,14 +134,14 @@ class _OrdersPageState extends State<OrdersPage> {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            '\$${order.minPrice.toStringAsFixed(0)}',
+                            '\$${order.price.toStringAsFixed(0)}',
                             style: TextStyle(
                               color: Colors.yellow,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
-                      ),
+                  ),
                       trailing: Container(
                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
@@ -115,14 +151,15 @@ class _OrdersPageState extends State<OrdersPage> {
                         child: Text(
                           order.status,
                           style: TextStyle(
-                            color: Colors.white,
+                    color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                    ),
+                  ),
                   );
                 } catch (e) {
+                  print('Error parsing order: $e');
                   return Card(
                     color: Colors.grey[900],
                     margin: EdgeInsets.only(bottom: 16),
@@ -134,9 +171,9 @@ class _OrdersPageState extends State<OrdersPage> {
                     ),
                   );
                 }
+                  },
+                );
               },
-            );
-          },
         ),
       ),
     );

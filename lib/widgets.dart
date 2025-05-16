@@ -14,8 +14,8 @@ Widget buildTextFormField({
       Text(
         label,
         style: TextStyle(
-          color: Colors.white,
           fontSize: 16,
+          color: Colors.white,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -50,58 +50,5 @@ Widget buildLogoutButton(BuildContext context) {
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     },
-  );
-}
-
-Widget buildErrorWidget(String message, {VoidCallback? onRetry}) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          message,
-          style: TextStyle(color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-        if (onRetry != null) ...[
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: onRetry,
-            child: Text('Retry'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.yellow,
-              foregroundColor: Colors.black,
-            ),
-          ),
-        ],
-      ],
-    ),
-  );
-}
-
-Widget buildLoadingWidget() {
-  return Center(
-    child: CircularProgressIndicator(
-      color: Colors.yellow,
-    ),
-  );
-}
-
-Widget buildEmptyStateWidget(String message) {
-  return Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          message,
-          style: TextStyle(color: Colors.white),
-        ),
-        SizedBox(height: 8),
-        Text(
-          'Your items will appear here',
-          style: TextStyle(color: Colors.grey[400]),
-        ),
-      ],
-    ),
   );
 }

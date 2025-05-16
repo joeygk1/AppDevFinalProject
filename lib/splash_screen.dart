@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/magic_sole_icon.png',
+              'assets/magic_sole_icon.png',
             ),
             Text(
               'Your Sole Restored',

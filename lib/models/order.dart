@@ -3,20 +3,16 @@ import 'sneaker.dart';
 class Order {
   final String id;
   final String userId;
-  final String title;
-  final String brand;
-  final String image;
-  final double minPrice;
+  final Sneaker sneaker;
+  final double price;
   final DateTime orderDate;
   final String status;
 
   Order({
     required this.id,
     required this.userId,
-    required this.title,
-    required this.brand,
-    required this.image,
-    required this.minPrice,
+    required this.sneaker,
+    required this.price,
     required this.orderDate,
     required this.status,
   });
@@ -25,10 +21,14 @@ class Order {
     return {
       'id': id,
       'userId': userId,
-      'title': title,
-      'brand': brand,
-      'image': image,
-      'minPrice': minPrice,
+      'sneaker': {
+        'id': sneaker.id,
+        'title': sneaker.title,
+        'brand': sneaker.brand,
+        'image': sneaker.image,
+        'sku': sneaker.sku,
+      },
+      'price': price,
       'orderDate': orderDate.toIso8601String(),
       'status': status,
     };
@@ -38,10 +38,8 @@ class Order {
     return Order(
       id: json['id'],
       userId: json['userId'],
-      title: json['title'],
-      brand: json['brand'],
-      image: json['image'],
-      minPrice: json['minPrice'].toDouble(),
+      sneaker: Sneaker.fromJson(json['sneaker']),
+      price: json['price'].toDouble(),
       orderDate: DateTime.parse(json['orderDate']),
       status: json['status'],
     );
